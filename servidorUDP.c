@@ -51,6 +51,40 @@ int SetupUDPServerSocket(const char *service){
         return servSock;
     }
 
+
+
+void HandleTCPClient(int clntSocket){
+    char buffer[BUFSIZE];
+    char *line = NULL;
+    size_t len = 0;
+    ssize_t read = 0;
+    ssize_t numBytesSent, numBytesRcvd;
+    ssize_t fromlen;
+    fromlen = sizeof(&addr)
+    while (true){
+        numBytesRcvd = recvfrom(clntSocket, buffer, BUFSIZE, 0, &addr, fromlen)
+        if (numBytesRcvd < 0){
+            perror("recv() falhou\n");
+            exit(EXIT_FAILURE);
+            }
+        fputs("Client: ", stdout);
+        fputs(buffer, stdout);
+        fputc(’\n’, stdout);
+        fputs("Server: ", stdout);
+        read = getline(&line, &len, stdin);
+        numBytesSent = sendto(clntSocket, line, len, 0, sockaddr, socklen_t addr_len);
+        if (numBytesSent < 0){
+            perror("send() falhou\n");exit(EXIT_FAILURE);
+            }
+        if (strcmp(line, "exit\n") == 0){
+            free(line);
+            break;
+            }
+        }
+    }
+
+
+
 int main(int argc, char const *argv[]){
     if (argc != 2){
         perror("Execucao correta: ./chat-server <porta>\n");
@@ -59,5 +93,11 @@ int main(int argc, char const *argv[]){
 
     servSock = SetupUDPServerSocket(argv[1]);
 
+    clntSock = HandleTCPClient(servSock);
+
+    close(servSock);
+    close(clntSock);
+
+    return 0;
 
 }
