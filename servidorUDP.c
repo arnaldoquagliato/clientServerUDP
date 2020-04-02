@@ -17,8 +17,9 @@ int SetupUDPServerSocket(const char *service){
 
     memset(&addrCriteria, 0, sizeof(addrCriteria));
     addrCriteria.ai_family = AF_UNSPEC;
-    addrCriteria.ai_flags = AI_PASSIVE;
-    addrCriteria.ai_socktype = SOCK_STREAM;
+    addrCriteria.ai_flags = AI_PASSIVE; 
+    addrCriteria.ai_socktype = SOCK_DGRAM;
+    addrCriteria.ai_protocol = IPPROTO_UDP;
     
     struct addrinfo *servAddr;
 
@@ -27,13 +28,15 @@ int SetupUDPServerSocket(const char *service){
         perror("getaddrinfo() falhou\n");
         exit(EXIT_FAILURE);
         }
+
     int servSock = -1;
     for (struct addrinfo *addr = servAddr; addr != NULL; addr = addr->ai_next){
+
         servSock = socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol);
         if (servSock < 0)
         continue;
         
-        if ((bind(servSock, addr->ai_addr, addr->ai_addrlen) == 0) && (listen(servSock, MAXPENDING) == 0)){
+        if (bind(servSock, addr->ai_addr, addr->ai_addrlen) == 0){
             break;
             }
 
